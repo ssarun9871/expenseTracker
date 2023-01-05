@@ -16,3 +16,21 @@ exports.postAddUsers=async (req,res,next)=>{
         }
     });
 }
+
+exports.postLoginUser = async (req,res,next)=>{
+    let email = req.body.email;
+    let password = req.body.password;
+    let user = await Users.findByPk(email);
+    if(user){
+        if(user.password==password){
+            res.json({status:"successful", message:"Login Successfully"});
+        }
+        else{
+            res.status(401).json({status:"failed", message:"Wrong password"});
+           }
+        }
+    else{
+        res.status(401).json({status:"failed" , message:"User not registered"});
+        }
+
+}
