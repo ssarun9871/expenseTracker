@@ -1,4 +1,4 @@
-const expense = require('../models/expenses');
+
 const Expense = require('../models/expenses');
 
 exports.postAddExpense=async (req,res,next)=>{
