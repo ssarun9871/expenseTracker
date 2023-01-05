@@ -23,14 +23,14 @@ exports.postLoginUser = async (req,res,next)=>{
     let user = await Users.findByPk(email);
     if(user){
         if(user.password==password){
-            res.json({status:"successful", message:"Login Successfully"});
+            res.json({status:"successful", message:"User login successful"});
         }
         else{
-            res.status(401).json({status:"failed", message:"Wrong password"});
+            res.status(401).json({status:"failed", message:"User not authorized"});
            }
         }
     else{
-        res.status(401).json({status:"failed" , message:"User not registered"});
+        res.status(401).json({status:"failed" , message:"User not found"});
         }
 
 }
