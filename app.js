@@ -5,14 +5,14 @@ const cors = require('cors');
 
 const sequelize  = require('./util/database');
 const expenseRoutes = require('./routes/expense');
-const userRouter = require('./routes/users');
+const userRoutes = require('./routes/users');
 
 app.use(cors());
 app.use(bodyParser.urlencoded({extended:false}));
 app.use(bodyParser.json());
 
 app.use(expenseRoutes);
-app.use(userRouter);
+app.use(userRoutes);
 
 sequelize.sync()
 .then(result=>{
