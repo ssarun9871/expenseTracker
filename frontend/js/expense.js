@@ -23,6 +23,55 @@ let display = document.getElementById('display');
 btn.addEventListener('click', addExpense);
 
 
+//razor pay integeration
+document.getElementById('rzp-button1').onclick = async function(e){
+    let flag=false;
+    const token = localStorage.getItem('token')
+    const response = await axios.get('http://localhost:3000/purchase/createorder',{headers:{"Authorization":token}});
+
+    var options = {
+        "key": response.data.key_id,
+        "order_id": response.data.orderid, 
+        "amount": response.data.amount,
+        "currency": response.data.currency,
+        "name": "Buy premium",
+        "description": "Test Transaction",
+        "image": "https://example.com/your_logo",
+        "theme": {
+            "color": "#3399cc"
+        },
+        //handler will be executed if transaction is successful
+        "handler" : async function(response){
+        await axios.post('http://localhost:3000/purchase/checkout', {
+        order_id: response.razorpay_order_id,
+        payment_id: response.razorpay_payment_id,
+        status:"successful"
+        }, {headers:{"Authorization":token}})
+
+        alert("You are a premium user now")
+        },
+    };
+    
+    //if transaction successful
+    var rzp1 = new Razorpay(options);
+    rzp1.open();
+    e.preventDefault();
+
+    //if transaction failed
+    rzp1.on('payment.failed',async function (response){
+        alert("payment failed try again later");
+        console.log("resssp => "+JSON.stringify(response.error.metadata))
+
+        await axios.post('http://localhost:3000/purchase/checkout', {
+            order_id: response.error.metadata.order_id,
+            payment_id: response.error.metadata.payment_id,
+            status:"failed"
+    }, {headers:{"Authorization":token}})
+    })
+}
+
+
+
 async function addExpense(e) {
     e.preventDefault();
     try{
@@ -44,19 +93,18 @@ async function addExpense(e) {
     catch(err){
         console.log(err.response);
     }
-
 }
 
 
 function displayOnScreen(id, expense) {
     let p = `<li id="${id}" style="list-style:none;display:block;height:40px">${expense} <div style="float:right"> 
-            <button class="btn btn-secondary btn-sm" style="border-radius:20px; margin-right:10px" onClick="deleteExpense('${id}')">Delete Expense</button>
-            <button class="btn btn-secondary btn-sm" style="border-radius:20px" onClick = "editExpense('${id}')">Edit Expense</button>
+            <button class="btn btn-secondary btn-sm" style="border-radius:4px; margin-right:10px" onClick="deleteExpense('${id}')">Delete</button>
+            <button class="btn btn-secondary btn-sm" style="border-radius:4px" onClick = "editExpense('${id}')">Edit</button>
             </div></li>`;
     display.innerHTML = display.innerHTML + p;
 }
 
-
+ 
 function deleteExpense(id) {
     try{
         let elementToRemove = document.getElementById(id);
