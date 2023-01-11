@@ -1,7 +1,6 @@
 const Razorpay = require('razorpay');
 const Order = require('../models/orders');
 const Users = require('../models/users');
-const crypto = require("crypto");
 require('dotenv').config();
 
 
@@ -49,7 +48,9 @@ exports.checkOut = async(req,res)=>{
     const order = await Order.findOne({order: [[ 'id', 'DESC' ]]},{where:{userId:userId}}); 
  
     const promise1 = Order.update({paymentid: payment_id, status:status},{where:{id:order.id}});
-    const promise2 = Users.update({isPremium:premiumStatus},{where:{id:userId}});
+    const promise2 = Users.update({isPremium:premiumStatus
+    
+    },{where:{id:userId}});
 
     Promise.all([promise1,promise2]).then(res.json({status:status}));
 } 

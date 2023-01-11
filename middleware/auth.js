@@ -1,5 +1,4 @@
 const jwt = require('jsonwebtoken');
-const User = require('../models/users');
 
 exports.authenticate = (req, res, next)=>{
     try{
@@ -9,4 +8,4 @@ exports.authenticate = (req, res, next)=>{
         next();
     }
     catch{err=>{console.log(err)}}
-}
+} 

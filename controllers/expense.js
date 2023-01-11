@@ -1,4 +1,5 @@
 const Expense = require('../models/expenses');
+const User = require('../models/users')
 
 exports.postAddExpense=async (req,res,next)=>{
     
@@ -15,7 +16,6 @@ exports.postAddExpense=async (req,res,next)=>{
 
 exports.getDeleteExpense=async(req,res,next)=>{
     const id = req.params.id;
-    console.log('controllers_expense = '+id)
     Expense.findByPk(id)
     .then(data=>{
         data.destroy();
@@ -32,3 +32,13 @@ exports.getAllData = async(req,res,next)=>{
         res.json(data)
     });
 }
+
+
+exports.checkMembership = async(req,res,next)=>{
+    const userId = req.body.userId
+
+    User.findOne({where:{id:userId}})
+    .then(data=>{
+        res.json({premium:data.isPremium})
+    });
+} 
