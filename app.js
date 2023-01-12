@@ -11,6 +11,7 @@ const expenseTable = require('./models/expenses');
 const usersTable = require('./models/users');
 const orderTable = require('./models/orders');
 const premium = require('./routes/premium')
+const passwordReset = require('./routes/password');
 
 app.use(cors());
 app.use(bodyParser.urlencoded({extended:false}));
@@ -20,6 +21,7 @@ app.use(expenseRoutes);
 app.use(userRoutes);
 app.use('/premium',premium);
 app.use('/purchase',purchaseRoutes);
+app.use('/password',passwordReset)
  
 //this will add functionality that, in expenseTable foreign key may appear more than once
 usersTable.hasMany(expenseTable);
