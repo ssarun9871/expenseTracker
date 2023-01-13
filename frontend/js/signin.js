@@ -47,7 +47,7 @@ axios.post('http://localhost:3000/login',credential)
     error.style.visibility = "hidden";
     localStorage.setItem('token',res.data.token);
     window.location.href = "../views/expense.html"; 
-    console.log(res.data)})
+    })
 .catch(err=> {
     error.style.visibility = "visible";
     console.log(err.response.data)
