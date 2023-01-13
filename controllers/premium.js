@@ -12,7 +12,6 @@ exports.leaderboard = (req,res,next)=>{
      }})
     .then(data => {
         
-        console.log(JSON.stringify(data));
         let result=[];
         data.forEach(element => {
             let sum=0;
