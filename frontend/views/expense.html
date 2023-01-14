@@ -19,8 +19,8 @@
 <body background="/bg.jpg" style="background-repeat: no-repeat; background-size: cover;">
 
     <div class="main_container">
-        <!-- table content -->
         <div class="data_container" style="display: block;">
+          <!-- expense div -->
             <div style="text-align: center; margin-bottom: 20px;"><h1>Expenses</h1></div>
             <table class="table table-hover" >
                 <thead>
@@ -35,9 +35,25 @@
          
                 </tbody>
               </table>
+ 
+              
+              <nav aria-label="Page navigation example">
+                <ul class="pagination justify-content-center">
+                  <li class="page-item disabled">
+                    <a class="page-link" href="#" tabindex="-1" onclick="backBtn()">Previous</a>
+                  </li>
+                  <li class="page-item " onclick="activeLink()"><a class="page-link active " href="#" value="1">1</a></li>
+                  <li class="page-item" onclick="activeLink()"><a class="page-link" href="#" value="2">2</a></li>
+                  <li class="page-item" onclick="activeLink()"><a class="page-link" href="#" value="3">3</a></li>
+                    <a class="page-link" href="#" onclick="nxtBtn()">Next</a>
+                  </li>
+                </ul>
+              </nav>
+            
 
         </div>
        
+        <!-- leaderboard div -->
         <div class="leaderboard" style="display: none;">
             <div style="text-align: center; margin-bottom: 20px;"><h1>Leaderboard</h1></div>
 
@@ -52,6 +68,9 @@
          
                 </tbody>
               </table>
+
+            
+ 
         </div>
 
 

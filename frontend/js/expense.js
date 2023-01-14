@@ -6,6 +6,7 @@ let display = document.getElementById('display');
 let ldrBoard = document.getElementById('ldrboard');
 let download = document.getElementById('download');
 
+
 const token = localStorage.getItem('token')
 
 btn.addEventListener('click', addExpense);
@@ -71,6 +72,20 @@ function showLeaderboard(e){
     }
 
    }
+
+
+   //pagination
+function activeLink(){
+    let page = document.getElementsByClassName('page-link');
+    let currentValue = 1
+    console.log(page);
+    for(index of page){
+        index.classList.remove('active');
+    }
+
+    event.target.classList.add('active');
+    currentValue = event.target.value;  
+}
 
 
 //razor pay integeration
