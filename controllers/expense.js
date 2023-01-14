@@ -1,5 +1,32 @@
 const Expense = require('../models/expenses');
-const User = require('../models/users')
+const User = require('../models/users');
+const S3service = require('../services/S3services');
+const download = require('../models/download');
+
+exports.downloadexpense = async(req,res)=>{
+    try{
+    const userId = req.body.userId
+    
+    Expense.findAll({where:{userId:userId}})
+    .then(async data=>{
+        let stringifyData = JSON.stringify(data);
+        
+        const filename = `Expense${userId}/${new Date()}.txt`;
+        const responseFromS3 = await S3service.uploadToS3(stringifyData,filename);
+        console.log(responseFromS3)
+        download.create({
+            userId:userId,
+            downloadlinks:responseFromS3.Location
+        })
+
+        res.status(200).json({fileURL:responseFromS3.Location,success:true});
+        }); 
+   }
+ catch(err){
+ res.status(400).json({fileURL:'', success:false,error:err});
+ }
+}
+ 
 
 exports.postAddExpense=async (req,res,next)=>{
     

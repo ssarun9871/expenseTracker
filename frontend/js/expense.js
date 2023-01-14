@@ -4,6 +4,7 @@ var category = document.getElementById('category');
 let btn = document.getElementById('submit');
 let display = document.getElementById('display');
 let ldrBoard = document.getElementById('ldrboard');
+let download = document.getElementById('download');
 
 const token = localStorage.getItem('token')
 
@@ -37,6 +38,16 @@ window.addEventListener('DOMContentLoaded',async ()=>{
         console.log(err)
     }
 })
+
+
+
+download.addEventListener('click',downloadReport);
+async function downloadReport(){
+let users= await axios.get('http://localhost:3000/downloadexpense',{headers:{"Authorization":token}})
+window.location.replace(users.data.fileURL);
+}
+
+
 async function leaderboardApiCall(){
     let users= await axios.get('http://localhost:3000/premium/leaderboard',{headers:{"Authorization":token}})
    
@@ -48,7 +59,6 @@ async function leaderboardApiCall(){
 
 function showLeaderboard(e){
     e.preventDefault();
-    
     //if expense is visible then hide it and display leaderboard
     if( document.getElementsByClassName('data_container')[0].style.display=='block'){
         document.getElementsByClassName('data_container')[0].style.display='none';
