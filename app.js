@@ -43,7 +43,7 @@ passwordRequestTable.belongsTo(usersTable);
 usersTable.hasMany(downloadTable);
 downloadTable.belongsTo(usersTable); 
 
-sequelize.sync() 
+sequelize.sync( ) 
 .then(result=>{
     app.listen(3000);
 })

@@ -2,7 +2,6 @@
 <html lang="en">
 
 <head>
-   
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -22,6 +21,9 @@
         <div class="data_container" style="display: block;">
           <!-- expense div -->
             <div style="text-align: center; margin-bottom: 20px;"><h1>Expenses</h1></div>
+
+           <!-- expense table  -->
+          <div style="overflow:auto; height:75%;">
             <table class="table table-hover" >
                 <thead>
                   <tr>
@@ -35,20 +37,27 @@
          
                 </tbody>
               </table>
- 
+          </div> 
               
-              <nav aria-label="Page navigation example">
-                <ul class="pagination justify-content-center">
-                  <li class="page-item disabled">
-                    <a class="page-link" href="#" tabindex="-1" onclick="backBtn()">Previous</a>
-                  </li>
-                  <li class="page-item " onclick="activeLink()"><a class="page-link active " href="#" value="1">1</a></li>
-                  <li class="page-item" onclick="activeLink()"><a class="page-link" href="#" value="2">2</a></li>
-                  <li class="page-item" onclick="activeLink()"><a class="page-link" href="#" value="3">3</a></li>
-                    <a class="page-link" href="#" onclick="nxtBtn()">Next</a>
+              <nav aria-label="Page navigation example" style="margin-top: 15px;">
+                <ul class="pagination justify-content-center" id="paginationUl">
+
+                  <li class="page-item" onclick="activeLink(1)" value="1"><a class="page-link active " href="#" >1</a></li>                                                  
+
                   </li>
                 </ul>
-              </nav>
+              </nav> 
+
+              <div style="display: flex;justify-content: center;">
+                <span>Rows per page</span>
+                <select class="form-select-md ms-2" aria-label="Default select example" style="width: 65px;" id="rowsPerPage">
+                  <option value="5" onclick="rowsInPage(5)">5</option>
+                  <option value="10" onclick="rowsInPage(10)">10</option>
+                  <option value="25" onclick="rowsInPage(25)">25</option>
+                  <option value="50" onclick="rowsInPage(50)">50</option>
+                  <option value="100" onclick="rowsInPage(100)">100</option>
+                </select>
+              </div>
             
 
         </div>

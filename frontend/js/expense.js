@@ -6,18 +6,26 @@ let display = document.getElementById('display');
 let ldrBoard = document.getElementById('ldrboard');
 let download = document.getElementById('download');
 
+var currPage = 0;
+var rowsPerPage = 0;
 
-const token = localStorage.getItem('token')
-
+const token = localStorage.getItem('token');
 btn.addEventListener('click', addExpense);
 ldrBoard.addEventListener('click',showLeaderboard);
 
+async function rowsInPage(rows){
+   await axios.get(`http://localhost:3000/updaterow/${rows}`,{headers:{"Authorization":token}});
+   location.reload();
+}
 
 window.addEventListener('DOMContentLoaded',async ()=>{
     try{
-        const token = localStorage.getItem('token')
         const res  = await axios.get('http://localhost:3000/data',{headers:{"Authorization":token}})
-        axios.get('http://localhost:3000/membership',{headers:{"Authorization":token}}).then(res=>{
+        
+        await axios.get('http://localhost:3000/membership',{headers:{"Authorization":token}}).then(res=>{
+      
+            localStorage.setItem("noOfPages",res.data.rowPreference)//store the rowPreference in local storage
+            rowsPerPage = localStorage.getItem("noOfPages");
 
             if(res.data.premium == true ){
                 document.getElementById('premium').style.visibility='visible'
@@ -29,17 +37,63 @@ window.addEventListener('DOMContentLoaded',async ()=>{
             else{ document.getElementById('rzp-button1').style.visibility='visible'}
         }) 
        
-        for (let i = 0; i < res.data.length; i++) {
-            let id = res.data[i].id;
-            displayOnExpense(id, res.data[i]);
+       //initial pagination when page load
+        let pages = await paginate(res.data , rowsPerPage);
+        let page =  pages[currPage];
+
+        for(let i = 2;i<=pages.length;i++ ){
+            let parent = document.getElementById('paginationUl');
+            parent.innerHTML = parent.innerHTML+(` <li class="page-item" onclick="activeLink(${i})" value="${i}"><a class="page-link" href="#" >${i}</a></li>  `)
         }
-       
+
+        for (let i = 0; i < page.length; i++) {
+            let id = page[i].id;
+            displayOnExpense(id, page[i]);
+        }
     }
+    
     catch(err){
         console.log(err)
     }
 })
 
+
+   //when user clicks on different page number
+   async function activeLink(currPage){
+    let pageTab = document.getElementsByClassName('page-link');
+    for(index of pageTab){
+        index.classList.remove('active');
+    }
+
+    event.target.classList.add('active'); 
+
+    const res  = await axios.get('http://localhost:3000/data',{headers:{"Authorization":token}});
+    let pages = await paginate(res.data , rowsPerPage);
+    currPage = currPage-1;
+    let page =  pages[currPage];
+    
+    //display rows acc. to the "rows per page" and "page number"
+    document.getElementById('display').innerHTML = ""; 
+    for (let i = 0; i < page.length; i++) {
+        let id = page[i].id;
+        displayOnExpense(id, page[i]);
+    }
+}
+
+
+//It will give the array of pages according to the "rows per page"
+function  paginate(arr,size){
+    return new Promise((resolve,reject)=>{
+       const d =  arr.reduce((acc, val, i)=>{
+            let idx = Math.floor(i/size);
+            let page = acc[idx] || (acc[idx]=[])
+            page.push(val);
+            return acc;
+        },[])
+
+        resolve(d);
+    })
+}
 
 
 download.addEventListener('click',downloadReport);
@@ -72,20 +126,6 @@ function showLeaderboard(e){
     }
 
    }
-
-
-   //pagination
-function activeLink(){
-    let page = document.getElementsByClassName('page-link');
-    let currentValue = 1
-    console.log(page);
-    for(index of page){
-        index.classList.remove('active');
-    }
-
-    event.target.classList.add('active');
-    currentValue = event.target.value;  
-}
 
 
 //razor pay integeration
@@ -121,10 +161,12 @@ document.getElementById('rzp-button1').onclick = async function(e){
     };
     
 
+
     //if transaction successful
     var rzp1 = new Razorpay(options);
     rzp1.open();
     e.preventDefault();
+
 
     //if transaction failed
     rzp1.on('payment.failed',async function (response){
@@ -137,7 +179,6 @@ document.getElementById('rzp-button1').onclick = async function(e){
     }, {headers:{"Authorization":token}})
     })
 }
-
 
 
 async function addExpense(e) {
