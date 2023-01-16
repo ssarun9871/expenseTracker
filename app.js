@@ -2,6 +2,10 @@ const express = require('express');
 const app = express();
 const bodyParser  = require('body-parser');
 const cors = require('cors');
+const helmet = require('helmet');
+const morgan = require('morgan');
+const path = require('path');
+const fs = require('fs');
 
 const sequelize  = require('./util/database');
 const expenseRoutes = require('./routes/expense');
@@ -17,12 +21,15 @@ const userRoutes = require('./routes/users');
 const purchaseRoutes = require('./routes/purchase');
 const premium = require('./routes/premium')
 const passwordReset = require('./routes/password');
+const accessLogStream = fs.createWriteStream(path.join(__dirname,'access.log'),{flags:'a'});
 
 app.use(cors());
 app.use(bodyParser.urlencoded({extended:false}));
 app.use(bodyParser.json());
+app.use(helmet()); 
+app.use(morgan('combined',{stream:accessLogStream}));
 
-app.use(expenseRoutes);
+app.use(expenseRoutes); 
 app.use(userRoutes);
 app.use('/premium',premium);
 app.use('/purchase',purchaseRoutes);
@@ -45,7 +52,7 @@ downloadTable.belongsTo(usersTable);
 
 sequelize.sync( ) 
 .then(result=>{
-    app.listen(3000);
+    app.listen(process.env.PORT||3000);
 })
 .catch(err=>
     {console.log(err);

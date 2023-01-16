@@ -1,8 +1,10 @@
 const Sequelize = require('sequelize');
-const sequelize = new Sequelize('expense_tracker', 'root', '1234',{
+require('dotenv').config();
+
+const sequelize = new Sequelize('expense_tracker', 'root',process.env.DB_password,{
     dialect:"mysql",
     host:'localhost',
-    define: {
+    define: { 
         timestamps: false
       }
 })
