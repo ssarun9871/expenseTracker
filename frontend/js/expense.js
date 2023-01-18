@@ -36,8 +36,9 @@ window.addEventListener('DOMContentLoaded',async ()=>{
             }
             else{ document.getElementById('rzp-button1').style.visibility='visible'}
         }) 
-       
-       //initial pagination when page load
+        document.getElementById('select').value = rowsPerPage
+
+        //initial pagination when page load
         let pages = await paginate(res.data , rowsPerPage);
         let page =  pages[currPage];
 

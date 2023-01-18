@@ -35,6 +35,10 @@ function signup(event) {
         }
         //validation for password
         if (password == "") { document.getElementById('empty_pwd').style.visibility = "visible" }
+        else if(password.length<8){
+            document.getElementById('empty_pwd').textContent = "Password must be 8-16 characters in length"
+            document.getElementById('empty_pwd').style.visibility = "visible"
+        }
         else {
             document.getElementById('empty_pwd').style.visibility = "hidden"
             validation++
@@ -91,14 +95,16 @@ function signup(event) {
             success.style.visibility = "visible"
             setTimeout(() => {
             success.style.visibility = "hidden"
-            }, 2000)
+            window.location.href = "../views/signin.html"; 
+            }, 500)
         })
         .catch(err => {
             if (err.response.data == "already_exist") {
             already_exist.style.visibility = "visible"
 
             setTimeout(() => {
-            already_exist.style.visibility = "hidden"}, 2000)
+            already_exist.style.visibility = "hidden"}, 1500)
+            
             }
 
             else { console.log(err.response)}

@@ -31,6 +31,10 @@ event.preventDefault();
         if(password==''){
         empty_pwd.style.visibility = 'visible';
         }
+        else if(password.length<8){
+        empty_pwd.textContent = "Password must be 8-16 characters in length"
+        empty_pwd.style.visibility = 'visible';
+        }
         else{empty_pwd.style.visibility = "hidden";
         validation++;
         }

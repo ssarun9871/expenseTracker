@@ -13,7 +13,7 @@ exports.downloadexpense = async(req,res)=>{
         
         const filename = `Expense${userId}/${new Date()}.txt`;
         const responseFromS3 = await S3service.uploadToS3(stringifyData,filename);
-        console.log(responseFromS3)
+        
         download.create({
             userId:userId,
             downloadlinks:responseFromS3.Location

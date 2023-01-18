@@ -6,17 +6,21 @@ const helmet = require('helmet');
 const morgan = require('morgan');
 const path = require('path');
 const fs = require('fs');
+// const http = require('http');
+// const privateKey = fs.readFileSync('server.key');
+// const certificate = fs.readFileSync('server.cert');
 
 const sequelize  = require('./util/database');
-const expenseRoutes = require('./routes/expense');
 
-
+//tables
 const expenseTable = require('./models/expenses');
 const usersTable = require('./models/users');
 const orderTable = require('./models/orders');
 const passwordRequestTable = require('./models/forgotPasswordReq');
 const downloadTable = require('./models/download');
 
+//routes
+const expenseRoutes = require('./routes/expense');
 const userRoutes = require('./routes/users');
 const purchaseRoutes = require('./routes/purchase');
 const premium = require('./routes/premium')
@@ -26,14 +30,15 @@ const accessLogStream = fs.createWriteStream(path.join(__dirname,'access.log'),{
 app.use(cors());
 app.use(bodyParser.urlencoded({extended:false}));
 app.use(bodyParser.json());
-app.use(helmet()); 
 app.use(morgan('combined',{stream:accessLogStream}));
+app.use(helmet());
 
 app.use(expenseRoutes); 
 app.use(userRoutes);
 app.use('/premium',premium);
 app.use('/purchase',purchaseRoutes);
-app.use('/password',passwordReset)
+app.use('/password',passwordReset);
+
  
 //this will add functionality that, in expenseTable foreign key may appear more than once
 usersTable.hasMany(expenseTable);
@@ -52,6 +57,8 @@ downloadTable.belongsTo(usersTable);
 
 sequelize.sync( ) 
 .then(result=>{
+
+    //http.createServer({key:privateKey,cert:certificate},app)
     app.listen(process.env.PORT||3000);
 })
 .catch(err=>
