@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 const bodyParser  = require('body-parser');
 const cors = require('cors');
-const helmet = require('helmet');
+//const helmet = require('helmet');
 const morgan = require('morgan');
 const path = require('path');
 const fs = require('fs');
@@ -31,7 +31,7 @@ app.use(cors());
 app.use(bodyParser.urlencoded({extended:false}));
 app.use(bodyParser.json());
 app.use(morgan('combined',{stream:accessLogStream}));
-app.use(helmet());
+//app.use(helmet());
 
 app.use(expenseRoutes); 
 app.use(userRoutes);
@@ -39,6 +39,9 @@ app.use('/premium',premium);
 app.use('/purchase',purchaseRoutes);
 app.use('/password',passwordReset);
 
+app.use((req,res)=>{
+    res.sendFile(path.join(__dirname,"./",`/views/${req.url}`))
+})
  
 //this will add functionality that, in expenseTable foreign key may appear more than once
 usersTable.hasMany(expenseTable);
