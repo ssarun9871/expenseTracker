@@ -86,12 +86,13 @@
      <!-- expense entry container    -->
     <div class="add_expense_container flex-column  bg-light" >
 
-         <!-- buy premium button -->
-        <button id="rzp-button1" style="visibility: hidden;">Pay</button>
-        <script src="http://checkout.razorpay.com/v1/checkout.js"></script>
+        <!-- buy premium button -->
+        <div id ='premium_div' style="display: flex; flex-direction:column; align-items: flex-end;" >
+          <button class="btn btn-primary btn-sm" id="rzp-button1" style="visibility: visible;font-weight: 600;" >Buy premium membership</button>
+          <script src="http://checkout.razorpay.com/v1/checkout.js"></script>
 
-        <p id="premium" style="visibility: hidden;">You are a premium user</p>
-
+          <p id="premium" style="visibility: hidden;font-weight: 510; font-size: large;"><img src="./premium.png" style="width: 20px;height: 20px;margin-bottom: 6px;"> Premium user  </p>
+        </div>
 
         <form class="a  d-flex flex-column " method="POST">
            
@@ -110,18 +111,24 @@
 
                 <label class="form-label align-self-center">Choose Category</label>
                 <select class="form-select w-50 align-self-center" id="category" required>
-                    <option id="fuel">fuel</option>
-                    <option id="food">food</option>
-                    <option id="electricity">electricity</option>
-                    <option id="movies">movies</option>
-                </select>
+                  <option id="food" selected>Food</option>
+                  <option id="clothes">Clothes</option>
+                  <option id="personal_care">Personal care</option>
+                  <option id="healthcare">Healthcare</option>
+                  <option id="vacation">Vacation</option>
+                  <option id="utilities">Utilities</option>
+                  <option id="insurance">Insurance</option>
+                  <option id="transportation">Transportation</option>
+                  <option id="miscellaneous">Miscellaneous</option>
+              </select>
 
                <button class="btn btn-secondary w-25 align-self-center mb-4 mt-3" type="submit" id="submit">add expense</button><br>
         </form>
  
-      <button id="ldrboard" style="visibility: hidden;">Leaderboard</button>
-      <button id="download" style="visibility:hidden;">Download report</button>
-
+        <div id="premium_features" style="padding: 10px; height: 100px; display: flex; flex-direction: column; justify-content: space-evenly;">
+          <button class="btn btn-secondary btn-sm w-50" id="ldrboard" style="visibility: hidden;font-weight: 600;align-self: center;">&nbsp;&nbsp;&nbsp;Leaderboard&nbsp;&nbsp;&nbsp;</button>
+          <button class="btn btn-secondary btn-sm w-50" id="download" style="visibility:hidden;font-weight: 600;align-self: center;">Download report</button>
+        </div>
     </div>
 </div>
 </body>

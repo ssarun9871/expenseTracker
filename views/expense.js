@@ -22,7 +22,6 @@ window.addEventListener('DOMContentLoaded',async ()=>{
     try{
         document.getElementById('amt').value="";
         document.getElementById('desc').value="";
-        document.getElementById('category').value="";
         
         const res  = await axios.get('http://13.235.238.48:3000/data',{headers:{"Authorization":token}})
         
@@ -35,10 +34,10 @@ window.addEventListener('DOMContentLoaded',async ()=>{
                 document.getElementById('premium').style.visibility='visible'
                 document.getElementById('ldrboard').style.visibility = 'visible'
                 document.getElementById('download').style.visibility='visible'
+                document.getElementById('rzp-button1').remove();
 
                 leaderboardApiCall();
             }
-            else{ document.getElementById('rzp-button1').style.visibility='visible'}
         }) 
         document.getElementById('select').value = rowsPerPage
 
@@ -203,7 +202,6 @@ async function addExpense(e) {
 
         document.getElementById('amt').value="";
         document.getElementById('desc').value="";
-        document.getElementById('category').value="";
     }
 
     catch(err){
