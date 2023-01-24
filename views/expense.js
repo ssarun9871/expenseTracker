@@ -215,7 +215,7 @@ function displayOnExpense(id, expense) {
     let exp =`<tr id="${id}">
     <td id="${id}">${expense.category}</td>
     <td>${expense.description}</td>
-    <td style="text-align: right;">$${expense.amount}</td>
+    <td style="text-align: right;">${expense.amount}</td>
     <td class="edit_delete_column"><button class="edit_button" id="${id}" onClick = "editExpense('${id}')"> </button>
                                    <button class="delete_button" id="${id}" onClick="deleteExpense('${id}')"></button></td>
     </tr>`
