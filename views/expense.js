@@ -31,13 +31,13 @@ window.addEventListener('DOMContentLoaded',async ()=>{
             rowsPerPage = localStorage.getItem("noOfPages");
 
             if(res.data.premium == true ){
+                document.getElementById('rzp-button1').remove();
                 document.getElementById('premium').style.visibility='visible'
                 document.getElementById('ldrboard').style.visibility = 'visible'
                 document.getElementById('download').style.visibility='visible'
-                document.getElementById('rzp-button1').remove();
-
                 leaderboardApiCall();
             }
+            else {document.getElementById('rzp-button1').style.visibility = 'visible'}
         }) 
         document.getElementById('select').value = rowsPerPage
 
@@ -155,7 +155,7 @@ document.getElementById('rzp-button1').onclick = async function(e){
         status:"successful"
         }, {headers:{"Authorization":token}})
 
-        document.getElementById('rzp-button1').style.visibility='hidden';
+        document.getElementById('rzp-button1').remove();
         document.getElementById('premium').style.visibility='visible';
         document.getElementById('ldrboard').style.visibility = 'visible'
         document.getElementById('download').style.visibility='visible'
