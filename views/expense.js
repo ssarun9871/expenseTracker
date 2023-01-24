@@ -14,7 +14,7 @@ btn.addEventListener('click', addExpense);
 ldrBoard.addEventListener('click',showLeaderboard);
 
 async function rowsInPage(rows){
-   await axios.get(`http://13.235.238.48:3000/updaterow/${rows}`,{headers:{"Authorization":token}});
+   await axios.get(`http://35.154.229.99:3000/updaterow/${rows}`,{headers:{"Authorization":token}});
    location.reload();
 }
 
@@ -23,9 +23,9 @@ window.addEventListener('DOMContentLoaded',async ()=>{
         document.getElementById('amt').value="";
         document.getElementById('desc').value="";
         
-        const res  = await axios.get('http://13.235.238.48:3000/data',{headers:{"Authorization":token}})
+        const res  = await axios.get('http://35.154.229.99:3000/data',{headers:{"Authorization":token}})
         
-        await axios.get('http://13.235.238.48:3000/membership',{headers:{"Authorization":token}}).then(res=>{
+        await axios.get('http://35.154.229.99:3000/membership',{headers:{"Authorization":token}}).then(res=>{
       
             localStorage.setItem("noOfPages",res.data.rowPreference)//store the rowPreference in local storage
             rowsPerPage = localStorage.getItem("noOfPages");
@@ -71,7 +71,7 @@ window.addEventListener('DOMContentLoaded',async ()=>{
 
     event.target.classList.add('active'); 
 
-    const res  = await axios.get('http://13.235.238.48:3000/data',{headers:{"Authorization":token}});
+    const res  = await axios.get('http://35.154.229.99:3000/data',{headers:{"Authorization":token}});
     let pages = await paginate(res.data , rowsPerPage);
     currPage = currPage-1;
     let page =  pages[currPage];
@@ -102,13 +102,13 @@ function  paginate(arr,size){
 
 download.addEventListener('click',downloadReport);
 async function downloadReport(){
-let users= await axios.get('http://13.235.238.48:3000/downloadexpense',{headers:{"Authorization":token}})
+let users= await axios.get('http://35.154.229.99:3000/downloadexpense',{headers:{"Authorization":token}})
 window.location.replace(users.data.fileURL);
 }
 
 
 async function leaderboardApiCall(){
-    let users= await axios.get('http://13.235.238.48:3000/premium/leaderboard',{headers:{"Authorization":token}})
+    let users= await axios.get('http://35.154.229.99:3000/premium/leaderboard',{headers:{"Authorization":token}})
    
     users.data.forEach(element => {
        displayOnLeaderBoard(element)
@@ -134,7 +134,7 @@ function showLeaderboard(e){
 
 //razor pay integeration
 document.getElementById('rzp-button1').onclick = async function(e){
-    const response = await axios.get('http://13.235.238.48:3000/purchase/createorder',{headers:{"Authorization":token}});
+    const response = await axios.get('http://35.154.229.99:3000/purchase/createorder',{headers:{"Authorization":token}});
 
     var options = {
         "key": response.data.key_id,
@@ -149,7 +149,7 @@ document.getElementById('rzp-button1').onclick = async function(e){
         },
         //handler will be executed if transaction is successful
         "handler" : async function(response){
-        await axios.post('http://13.235.238.48:3000/purchase/checkout', {
+        await axios.post('http://35.154.229.99:3000/purchase/checkout', {
         order_id: response.razorpay_order_id,
         payment_id: response.razorpay_payment_id,
         status:"successful"
@@ -176,7 +176,7 @@ document.getElementById('rzp-button1').onclick = async function(e){
     rzp1.on('payment.failed',async function (response){
         alert("payment failed try again later");
 
-        await axios.post('http://13.235.238.48:3000/purchase/checkout', {
+        await axios.post('http://35.154.229.99:3000/purchase/checkout', {
             order_id: response.error.metadata.order_id,
             payment_id: response.error.metadata.payment_id,
             status:"failed"
@@ -197,7 +197,7 @@ async function addExpense(e) {
         };
         let exp = `${amount.value}  -  ${description.value}  -  ${category.value}`;
     
-        const id= await axios.post('http://13.235.238.48:3000/', obj,{headers:{"Authorization":token}});
+        const id= await axios.post('http://35.154.229.99:3000/', obj,{headers:{"Authorization":token}});
         displayOnExpense(id.data, obj);
 
         document.getElementById('amt').value="";
@@ -235,7 +235,7 @@ function deleteExpense(id) {
     try{
         let elementToRemove = document.getElementById(id);
         elementToRemove.remove();
-        return axios.get(`http://13.235.238.48:3000/delete/${id}`)
+        return axios.get(`http://35.154.229.99:3000/delete/${id}`)
     }
 
     catch(err){
