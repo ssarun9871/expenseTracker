@@ -1,4 +1,5 @@
 const AWS = require('aws-sdk');
+
 exports.uploadToS3 = async(data,filename)=>{
     return new Promise((resolve,reject)=>{
         const bucket_name = process.env.bucket_name;

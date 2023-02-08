@@ -90,7 +90,7 @@ function signup(event) {
         already_exist.style.visibility = "hidden"
         success.style.visibility = "hidden"
 
-        axios.post('http://13.232.149.196:3000/adduser', user)
+        axios.post('http://localhost:3000/adduser', user)
         .then(res => {
             success.style.visibility = "visible"
             setTimeout(() => {

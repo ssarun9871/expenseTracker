@@ -14,7 +14,7 @@ btn.addEventListener('click', addExpense);
 ldrBoard.addEventListener('click',showLeaderboard);
 
 async function rowsInPage(rows){
-   await axios.get(`http://13.232.149.196:3000/updaterow/${rows}`,{headers:{"Authorization":token}});
+   await axios.get(`http://localhost:3000/updaterow/${rows}`,{headers:{"Authorization":token}});
    location.reload();
 }
 
@@ -23,9 +23,9 @@ window.addEventListener('DOMContentLoaded',async ()=>{
         document.getElementById('amt').value="";
         document.getElementById('desc').value="";
         
-        const res  = await axios.get('http://13.232.149.196:3000/data',{headers:{"Authorization":token}})
+        const res  = await axios.get('http://localhost:3000/data',{headers:{"Authorization":token}})
         
-        await axios.get('http://13.232.149.196:3000/membership',{headers:{"Authorization":token}}).then(res=>{
+        await axios.get('http://localhost:3000/membership',{headers:{"Authorization":token}}).then(res=>{
       
             localStorage.setItem("noOfPages",res.data.rowPreference)//store the rowPreference in local storage
             rowsPerPage = localStorage.getItem("noOfPages");
@@ -71,7 +71,7 @@ window.addEventListener('DOMContentLoaded',async ()=>{
 
     event.target.classList.add('active'); 
 
-    const res  = await axios.get('http://13.232.149.196:3000/data',{headers:{"Authorization":token}});
+    const res  = await axios.get('http://localhost:3000/data',{headers:{"Authorization":token}});
     let pages = await paginate(res.data , rowsPerPage);
     currPage = currPage-1;
     let page =  pages[currPage];
@@ -102,13 +102,13 @@ function  paginate(arr,size){
 
 download.addEventListener('click',downloadReport);
 async function downloadReport(){
-let users= await axios.get('http://13.232.149.196:3000/downloadexpense',{headers:{"Authorization":token}})
+let users= await axios.get('http://localhost:3000/downloadexpense',{headers:{"Authorization":token}})
 window.location.replace(users.data.fileURL);
 }
 
 
 async function leaderboardApiCall(){
-    let users= await axios.get('http://13.232.149.196:3000/premium/leaderboard',{headers:{"Authorization":token}})
+    let users= await axios.get('http://localhost:3000/premium/leaderboard',{headers:{"Authorization":token}})
    
     users.data.forEach(element => {
        displayOnLeaderBoard(element)
@@ -132,59 +132,6 @@ function showLeaderboard(e){
    }
 
 
-//razor pay integeration
-document.getElementById('rzp-button1').onclick = async function(e){
-    const response = await axios.get('http://13.232.149.196:3000/purchase/createorder',{headers:{"Authorization":token}});
-
-    var options = {
-        "key": response.data.key_id,
-        "order_id": response.data.orderid, 
-        "amount": response.data.amount,
-        "currency": response.data.currency,
-        "name": "Buy premium",
-        "description": "Test Transaction",
-        "image": "http://example.com/your_logo",
-        "theme": {
-            "color": "#3399cc"
-        },
-        //handler will be executed if transaction is successful
-        "handler" : async function(response){
-        await axios.post('http://13.232.149.196:3000/purchase/checkout', {
-        order_id: response.razorpay_order_id,
-        payment_id: response.razorpay_payment_id,
-        status:"successful"
-        }, {headers:{"Authorization":token}})
-
-        document.getElementById('rzp-button1').remove();
-        document.getElementById('premium').style.visibility='visible';
-        document.getElementById('ldrboard').style.visibility = 'visible'
-        document.getElementById('download').style.visibility='visible'
-
-        alert("You are a premium user now")
-        },
-    };
-    
-
-
-    //if transaction successful
-    var rzp1 = new Razorpay(options);
-    rzp1.open();
-    e.preventDefault();
-
-
-    //if transaction failed
-    rzp1.on('payment.failed',async function (response){
-        alert("payment failed try again later");
-
-        await axios.post('http://13.232.149.196:3000/purchase/checkout', {
-            order_id: response.error.metadata.order_id,
-            payment_id: response.error.metadata.payment_id,
-            status:"failed"
-    }, {headers:{"Authorization":token}})
-    })
-}
-
-
 async function addExpense(e) {
     e.preventDefault();
     try{
@@ -195,9 +142,9 @@ async function addExpense(e) {
             description: description.value,
             category: category.value  
         };
-        let exp = `${amount.value}  -  ${description.value}  -  ${category.value}`;
+        
     
-        const id= await axios.post('http://13.232.149.196:3000/', obj,{headers:{"Authorization":token}});
+        const id= await axios.post('http://localhost:3000/addexpense', obj,{headers:{"Authorization":token}});
         displayOnExpense(id.data, obj);
 
         document.getElementById('amt').value="";
@@ -235,7 +182,7 @@ function deleteExpense(id) {
     try{
         let elementToRemove = document.getElementById(id);
         elementToRemove.remove();
-        return axios.get(`http://13.232.149.196:3000/delete/${id}`)
+        return axios.get(`http://localhost:3000/delete/${id}`)
     }
 
     catch(err){
@@ -259,4 +206,57 @@ async function editExpense(id) {
     catch(err){
         console.log(err);
     }
+}
+
+
+//razor pay integeration
+document.getElementById('rzp-button1').onclick = async function(e){
+    const response = await axios.get('http://localhost:3000/purchase/createorder',{headers:{"Authorization":token}});
+
+    var options = {
+        "key": response.data.key_id,
+        "order_id": response.data.orderid, 
+        "amount": response.data.amount,
+        "currency": response.data.currency,
+        "name": "Buy premium",
+        "description": "Test Transaction",
+        "image": "http://example.com/your_logo",
+        "theme": {
+            "color": "#3399cc"
+        },
+        //handler will be executed if transaction is successful
+        "handler" : async function(response){
+        await axios.post('http://localhost:3000/purchase/checkout', {
+        order_id: response.razorpay_order_id,
+        payment_id: response.razorpay_payment_id,
+        status:"successful"
+        }, {headers:{"Authorization":token}})
+
+        document.getElementById('rzp-button1').remove();
+        document.getElementById('premium').style.visibility='visible';
+        document.getElementById('ldrboard').style.visibility = 'visible'
+        document.getElementById('download').style.visibility='visible'
+
+        alert("You are a premium user now")
+        },
+    };
+    
+
+
+    //if transaction successful
+    var rzp1 = new Razorpay(options);
+    rzp1.open();
+    e.preventDefault();
+
+
+    //if transaction failed
+    rzp1.on('payment.failed',async function (response){
+        alert("payment failed try again later");
+
+        await axios.post('http://localhost:3000/purchase/checkout', {
+            order_id: response.error.metadata.order_id,
+            payment_id: response.error.metadata.payment_id,
+            status:"failed"
+    }, {headers:{"Authorization":token}})
+    })
 }

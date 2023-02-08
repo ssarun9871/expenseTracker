@@ -1,35 +1,26 @@
 const User = require('../models/users');
 const Expense = require('../models/expenses');
 
-exports.leaderboard = (req,res,next)=>{
-    User.findAll({
-        //inserting Expense table in to Users table
-        include:{
-            model:Expense,
-            group:User.name,
-            attributes:['amount'],
-           
-     }})
-    .then(data => {
-        
-        let result=[];
-        data.forEach(element => {
-            let sum=0;
-            //this forEach loop is to loop through the expenses of current user and sum it up
-            element.expenses.forEach(expense=>{
-            sum=sum+expense.amount;
-            })
+exports.leaderboard = async (req,res,next)=>{
 
-            let obj = {
-                name:element.name,
-                total:sum
-            }
-            result.push(obj);
+    //grouping the expenses on the basis of userId with total amount of expense
+    Expense.aggregate([{
+        $group: {
+            _id: '$UserId',
+            total: { $sum: '$amount' }
+        },
+    }])
+    //after getting userId and total expense we get names associated with the userId
+    .then(async data => {
+        let result = data.map(async ele => {
+        let user = await User.findOne({ _id: ele._id });
+        let obj = { name: user.name, total: ele.total };
+        return obj;
         });
-
-        res.status(201).json(result.sort((a,b)=>b.total-a.total));})
-
+      
+        Promise.all(result).then(row => {
+        res.status(201).json(row.sort((a,b)=>b.total-a.total))
+        });
+    })
     .catch(err=>res.status(400).json({message:"unable to fetch leaderboard data",error:err}))
 } 
-
-  

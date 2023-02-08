@@ -1,25 +1,86 @@
 const Expense = require('../models/expenses');
 const User = require('../models/users');
 const S3service = require('../services/S3services');
-const download = require('../models/download');
+const Download = require('../models/download');
+
+
+exports.postAddExpense=async (req,res,next)=>{
+    const expense  = new Expense({
+        UserId:req.body.userId,
+        amount:req.body.amount,
+        description:req.body.description,
+        category: req.body.category,
+    })
+  
+    expense.save() 
+    .then(result=> res.status(201).json(result._id))
+    .catch(err => res.status(401).json({message:'unable to add expense',error:err}));
+}
+
+
+exports.getDeleteExpense=async(req,res,next)=>{
+    const id = req.params.id;
+    Expense.findByIdAndRemove(id)
+    .then(data=>{
+        res.status.json({status:'expense deleted successfully'});
+    })
+    .catch(err=>res.status(401).json({message:'unable to delete expense',error:err}));
+}
+
+
+exports.getAllData = async(req,res,next)=>{
+    const userId = req.body.userId
+    Expense.find({UserId:userId})
+    .then(data=>{
+        res.status(201).json(data)
+    })
+    .catch(err=>res.status(401).json({message:'unable to get expenses',error:err}));
+}
+
+
+exports.checkMembership = async(req,res,next)=>{
+    const userId = req.body.userId
+    User.findOne({_id:userId})
+    .then(async data=>{
+        res.status(201).json({premium:data.isPremium,rowPreference:data.rowPreference})
+    })
+    .catch(err=>res.status(401).json({message:'unable to membership info',error:err}));
+} 
+
+
+exports.updateRowPreference = async(req,res,next)=>{
+    const userId = req.body.userId;
+    User.findByIdAndUpdate(userId,{rowPreference:req.params.rows},(err,result)=>{
+     if(err){
+        res.status(401).json({message:'unable to update row preference'});
+     }
+     else {
+        res.status(201).json({message:'row preference saved successfullt'})
+     }
+    })
+    .catch(err=>res.status(401).json({message:'unable to update row',error:err}));
+}
+
+
 
 exports.downloadexpense = async(req,res)=>{
     try{
     const userId = req.body.userId
-    
-    Expense.findAll({where:{userId:userId}})
+    Expense.find({UserId:userId})
     .then(async data=>{
         let stringifyData = JSON.stringify(data);
         
         const filename = `Expense${userId}/${new Date()}.txt`;
         const responseFromS3 = await S3service.uploadToS3(stringifyData,filename);
         
-        download.create({
-            userId:userId,
+        const download = new Download({
+            UserId:req.body.userId,
             downloadlinks:responseFromS3.Location
         })
 
-        res.status(200).json({fileURL:responseFromS3.Location,success:true});
+        download.save()
+
+        res.status(200).json({fileURL:responseFromS3.Location,success:true})
         }); 
    }
  catch(err){
@@ -27,56 +88,3 @@ exports.downloadexpense = async(req,res)=>{
  }
 }
  
-
-exports.postAddExpense=async (req,res,next)=>{
-    
- await Expense.create({
-    amount:req.body.amount,
-    description:req.body.description,
-    category: req.body.category,
-    userId : req.body.userId
- })
- .then(result=> res.json(result.dataValues.id))//here the id is expense data id
- .catch(err => console.log(err));
-}
- 
-
-exports.getDeleteExpense=async(req,res,next)=>{
-    const id = req.params.id;
-    Expense.findByPk(id)
-    .then(data=>{
-        data.destroy();
-        res.json(data);
-    })
-}
-
-
-exports.getAllData = async(req,res,next)=>{
-    const userId = req.body.userId
-    
-    Expense.findAll({where:{userId:userId}})
-    .then(data=>{
-        res.json(data)
-    });
-}
-
-
-exports.checkMembership = async(req,res,next)=>{
-    const userId = req.body.userId
-
-    User.findOne({where:{id:userId}})
-    .then(async data=>{
-        const user = await User.findByPk(userId);
-        res.json({premium:data.isPremium,rowPreference:user.rowPreference})
-    });
-} 
-
-
-exports.updateRowPreference = async(req,res,next)=>{
-    const userId = req.body.userId;
-    console.log(req.params.rows);
-    const user = await User.findByPk(userId);
-    user.update({rowPreference:req.params.rows});
-    
-    res.send('row preference saved');
-}
